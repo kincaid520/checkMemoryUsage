@@ -3,14 +3,17 @@
 import re
 import sys
 
-def get(filename=None, endAddress="0x1fff0"):
+def get(filename=None, endAddress="0x1fff0", displayName=None):
     # Switching type
     endAddress = int(endAddress,16)
+
     # Exception
     if filename is None:
         print("Error when calling checkMemoryUsage.get")
         print("Usage: checkMemoryUsage.get([filename])")
         return
+    if displayName is None:
+        displayName = filename
 
     # Set parameters for parsing
     regex = "^Address: ([0-9a-fA-Fx]+) +, Function: [\w$]+ +, description: ([0-9a-fA-Fx\-]+) +"
@@ -52,17 +55,13 @@ def get(filename=None, endAddress="0x1fff0"):
 
     # Introduce the result
     with open("checkMemoryUsage.txt","a") as outputFile:
-        outputFile.write(str(filename)+"\t"+str(remainBuffer)+"\n")
-
-# Debug main function
-def debug_main():
-    get("Core0Boot1.txt",0x1fff0)
-    get("Core0Boot2.txt",0x1fff0)
-    get("Core0Isp.txt",0x1fff0)
+        outputFile.write(str(displayName)+"\t"+str(remainBuffer)+"\n")
 
 # Executing
 if len(sys.argv)<3:
-    print("usage: checkMemoryUsage [filename] [limit address]")
+    print("usage: checkMemoryUsage <file name> <limit address> [display name]")
+elif len(sys.argv) == 3:
+    get(sys.argv[1], sys.argv[2],)
 else:
-    get(sys.argv[1],sys.argv[2])
+    get(sys.argv[1], sys.argv[2], sys.argv[3])
 
